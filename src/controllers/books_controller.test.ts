@@ -132,4 +132,32 @@ describe("POST /api/v1/books endpoint", () => {
 		// Assert
 		expect(res.statusCode).toEqual(400);
 	});
+
+	test("status code 400 when attempting to save a book with an id that already exists", async () => {
+		// Arrange
+		const book = {
+			bookId: 1,
+			title: "The Hobbit",
+			author: "J. R. R. Tolkien",
+			description: "Someone finds a nice piece of jewellery while on holiday.",
+		};
+
+		jest.spyOn(bookService, "saveBook").mockImplementation(() => {
+			throw new Error("Book with id already exists");
+		});
+		// Act
+		const res = await request(app).post("/api/v1/books").send(book);
+		// Assert
+		expect(res.statusCode).toEqual(400);
+	});
+});
+
+describe("DELETE /api/v1/books/{bookId} endpoint", () => {
+	test("status code 200 for successfully deleting a book", async () => {
+		// Act
+		const res = await request(app).delete("/api/v1/books/1");
+
+		// Assert
+		expect(res.statusCode).toEqual(200);
+	});
 });
